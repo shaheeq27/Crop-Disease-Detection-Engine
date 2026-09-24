@@ -1,0 +1,14 @@
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.venv/
+venv/
+ENV/
+env/
+.pytest_cache/
+.DS_Store
+
+# Ignore models if desired, though normally we might use git lFS
+# If we don't want them in the repo at all:
+# models/*.pth
