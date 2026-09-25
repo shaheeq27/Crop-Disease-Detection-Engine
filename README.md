@@ -1,303 +1,271 @@
 # 🌿 Crop Disease Detection Engine
-
-> A standalone deep-learning engine for identifying crop diseases from leaf images using **PyTorch + ResNet-18**.
-
-Developed as the computer-vision component of **AgriNova**, this repository isolates the production disease-detection pipeline into a reusable and independently deployable engine.
-
----
-
-## ✨ Overview
-
-The engine takes a leaf image and returns ranked disease predictions across **12 crop-health classes**.
-
+> A standalone deep-learning system for detecting crop diseases from leaf images using **PyTorch, ResNet-18, FastAPI, and Next.js**.
+Built as the computer-vision component of **AgriNova**, this repository packages the trained disease-detection model into a complete, independently runnable application.
+## ✨ What It Does
+Upload a crop leaf image and get:
+- 🌱 Crop identification
+- 🦠 Disease prediction
+- 📊 Ranked prediction probabilities
+- ⚡ Inference time
+- 🧠 Model metadata
+- 🖼️ Image preview and analysis UI
 ```text
 Leaf Image
-    │
-    ▼
-RGB Conversion
-    │
-    ▼
-Resize 256 → Center Crop 224×224
-    │
-    ▼
-ImageNet Normalization
-    │
-    ▼
+    ↓
+Next.js Frontend
+    ↓
+FastAPI API
+    ↓
+Image Preprocessing
+    ↓
 ResNet-18
-    │
-    ▼
+    ↓
 12-Class Softmax
-    │
-    ▼
+    ↓
 Ranked Disease Predictions
-```
 
-### Key Numbers
+⸻
 
-| | |
-|---|---|
-| 🧠 Architecture | ResNet-18 |
-| 🌱 Classes | 12 |
-| 🖼️ Training Images | **15,968** |
-| 🔬 External Evaluation | **~38K images** |
-| 🌾 Training Sources | PlantVillage + PlantDoc |
-| 🎯 Training Seed | 42 |
-| ⚙️ Model Version | V6.6 |
+📊 Model
 
-The ~38K external images were used for **robustness analysis and independent evaluation**, not as additional training data.
+	
+Architecture	ResNet-18
+Classes	12
+Training Images	15,968
+External Images	~38K
+Training Sources	PlantVillage + PlantDoc
+Model Version	V6.6
+Training Seed	42
 
----
+The model was trained on 15,968 images across 12 disease classes, with approximately 38K additional external images used for robustness analysis and independent evaluation.
 
-## 🌾 Supported Crops
+The external images were not used as additional training data.
 
-| Crop | Conditions |
-|---|---|
-| 🌶️ **Chili** | Bacterial Spot, Healthy |
-| 🌽 **Maize** | Healthy, Northern Leaf Blight |
-| 🥔 **Potato** | Early Blight, Healthy, Late Blight |
-| 🍅 **Tomato** | Bacterial Spot, Early Blight, Healthy, Late Blight, Septoria Leaf Spot |
+Supported Crops
 
-**12 classes in total.**
+Crop	Conditions
+🌶️ Chili	Bacterial Spot, Healthy
+🌽 Maize	Healthy, Northern Leaf Blight
+🥔 Potato	Early Blight, Healthy, Late Blight
+🍅 Tomato	Bacterial Spot, Early Blight, Healthy, Late Blight, Septoria Leaf Spot
 
----
+⸻
 
-## 🧠 Model & Inference
+🧠 Inference Pipeline
 
-The engine uses a **ResNet-18** backbone with a custom 12-class classification head.
+Images are processed using the same pipeline used by the trained model:
 
-### Preprocessing
-
-Every image follows the same preprocessing pipeline:
-
-```text
-PIL Image
-   ↓
 RGB Conversion
-   ↓
-Resize(256)
-   ↓
-CenterCrop(224)
-   ↓
-ToTensor()
-   ↓
+      ↓
+Resize 256
+      ↓
+Center Crop 224×224
+      ↓
+ToTensor
+      ↓
 ImageNet Normalization
-   ↓
-[1, 3, 224, 224]
-```
+      ↓
+ResNet-18
+      ↓
+12-Class Softmax
 
 Normalization:
 
-```python
 mean = [0.485, 0.456, 0.406]
 std  = [0.229, 0.224, 0.225]
-```
 
-### Hardware
+The engine automatically uses:
 
-The engine automatically selects:
-
-```text
 Apple Silicon (MPS)
         ↓
       CUDA
         ↓
        CPU
-```
 
----
+⸻
 
-## 📊 Prediction Output
+🖥️ Application
 
-The engine returns predictions ranked by probability.
+The repository includes a complete web interface.
+
+User Flow
+
+Upload Leaf
+     ↓
+Preview Image
+     ↓
+Analyze Image
+     ↓
+Disease Detection
+     ↓
+Primary Prediction
+     ↓
+Ranked Alternatives
+
+The frontend is built with Next.js + TypeScript, while the model is exposed through a lightweight FastAPI service.
+
+⸻
+
+📁 Project Structure
+
+Crop-Disease-Detection-Engine/
+│
+├── disease_detection/
+│   ├── engine.py
+│   ├── preprocessor.py
+│   ├── schemas.py
+│   └── exceptions.py
+│
+├── models/
+│   ├── robust_best_model.pth
+│   └── class_mapping.json
+│
+├── frontend/
+│   └── src/
+│       ├── app/
+│       │   ├── page.tsx
+│       │   ├── globals.css
+│       │   └── layout.tsx
+│       └── types/
+│           └── index.ts
+│
+├── api.py
+├── inference.py
+├── test_engine.py
+├── test_api.py
+├── requirements.txt
+└── README.md
+
+⸻
+
+🚀 Run Locally
+
+1. Clone
+
+git clone https://github.com/shaheeq27/Crop-Disease-Detection-Engine.git
+cd Crop-Disease-Detection-Engine
+
+2. Backend
+
+python3 -m venv venv
+source venv/bin/activate
+pip install -r requirements.txt
+
+Start FastAPI:
+
+uvicorn api:app --reload --port 8000
+
+3. Frontend
+
+Open another terminal:
+
+cd frontend
+npm install
+npm run dev
+
+Open:
+
+http://localhost:3000
+
+⸻
+
+🧪 Testing
+
+Run the backend test suite:
+
+pytest
+
+The tests cover:
+
+* Image preprocessing
+* Invalid image handling
+* Model initialization
+* Class mapping
+* 12-class inference
+* Probability normalization
+* Prediction ordering
+* Healthy-class detection
+* API upload validation
+
+Current validation:
+
+6 passed
+
+The complete upload → API → model → result flow has also been verified in a real browser environment.
+
+⸻
+
+📊 Prediction Output
 
 Example:
 
-```json
 {
   "crop": "Maize",
   "disease": "Northern Leaf Blight",
   "probability": 0.94,
   "is_healthy": false
 }
-```
 
-The result also contains inference timing and model metadata.
+The API also returns inference timing and model metadata.
 
-> **Note:** `probability` is the model's raw softmax probability. It is **not a calibrated confidence score**.
+Note: probability is the model’s raw softmax probability. It is not a calibrated confidence score.
 
----
+⸻
 
-## 🧪 Evaluation & Robustness
+🛠️ Tech Stack
 
-The model was trained on **15,968 images across 12 classes**.
+Machine Learning
 
-To examine behavior beyond the primary training distribution, approximately **38K additional external images** were used for robustness analysis and independent evaluation.
+* Python
+* PyTorch
+* TorchVision
+* ResNet-18
+* Pillow
 
-The evaluation considers variations such as:
+Backend
 
-- Lighting
-- Background complexity
-- Image quality
-- Leaf orientation
-- Resolution
-- Field conditions
-- Visual variation across imagery
+* FastAPI
+* Uvicorn
+* Pydantic
 
-This provides a broader assessment than evaluating only on images from the primary training distribution.
+Frontend
 
----
+* Next.js
+* React
+* TypeScript
+* Tailwind CSS
 
-## 📁 Project Structure
+Testing
 
-```text
-Crop-Disease-Detection-Engine/
-│
-├── disease_detection/
-│   ├── engine.py          # Model loading & inference
-│   ├── preprocessor.py    # Image preprocessing
-│   ├── schemas.py         # Prediction schemas
-│   └── exceptions.py      # Engine exceptions
-│
-├── models/
-│   ├── robust_best_model.pth
-│   └── class_mapping.json
-│
-├── inference.py           # Standalone inference entry point
-├── test_engine.py         # Engine tests
-├── requirements.txt
-└── .gitignore
-```
+* Pytest
 
----
+⸻
 
-## 🚀 Quick Start
+⚠️ Scope
 
-### Clone
-
-```bash
-git clone https://github.com/shaheeq27/Crop-Disease-Detection-Engine.git
-cd Crop-Disease-Detection-Engine
-```
-
-### Create Environment
-
-```bash
-python3 -m venv venv
-source venv/bin/activate
-```
-
-### Install Dependencies
-
-```bash
-pip install -r requirements.txt
-```
-
-### Run Inference
-
-```bash
-python inference.py <path-to-image>
-```
-
-Example:
-
-```bash
-python inference.py sample_leaf.jpg
-```
-
----
-
-## 🧪 Testing
-
-Run the test suite:
-
-```bash
-pytest test_engine.py
-```
-
-The current suite covers:
-
-- Image preprocessing
-- Invalid image handling
-- Model initialization
-- Class mapping
-- Full 12-class inference
-- Probability normalization
-- Prediction ordering
-- Healthy-class detection
-- Deterministic inference
-
-Current validation:
-
-```text
-4 passed
-```
-
----
-
-## 🧩 Standalone by Design
-
-This repository contains only the reusable disease-detection inference layer.
-
-It does **not** depend on:
-
-- PostgreSQL
-- SQLAlchemy
-- FastAPI
-- Authentication
-- Farm records
-- Crop history
-- AgriNova database services
-- Frontend code
-
-The separation allows the model to be independently tested, deployed, integrated, or replaced without depending on the rest of the AgriNova platform.
-
----
-
-## 🛠️ Technology Stack
-
-```text
-Python
-├── PyTorch
-├── TorchVision
-├── Pillow
-├── Pydantic
-└── Pytest
-```
-
----
-
-## ⚠️ Scope
-
-This is a **12-class image classification engine**.
+This is a 12-class image classification system.
 
 It currently does not perform:
 
-- Pixel-level disease segmentation
-- Disease severity estimation
-- Diagnosis outside the supported classes
-- Probability calibration
+* Disease segmentation
+* Disease severity estimation
+* Diagnosis outside the supported classes
+* Probability calibration
 
-Performance can also vary when images differ substantially from the training and evaluation distributions.
+Performance may vary for images that differ substantially from the training and evaluation distributions.
 
----
+⸻
 
-## 🌱 AgriNova
+🌱 AgriNova
 
-This engine is part of **AgriNova**, a broader precision-agriculture platform combining machine learning, environmental information, crop intelligence, and agricultural decision support.
+This engine was developed as part of AgriNova, a broader precision-agriculture platform.
 
-The disease-detection component is maintained separately here so that the underlying computer-vision system can evolve independently.
+It is maintained separately so the disease-detection model can be independently tested, demonstrated, deployed, and integrated into other agricultural applications.
 
----
+⸻
 
-## 📌 Future Directions
+Built with PyTorch + FastAPI + Next.js 🌱
 
-- Probability calibration
-- Additional crops and diseases
-- Larger field-condition datasets
-- Improved out-of-distribution detection
-- Disease localization and severity estimation
-- Edge/mobile inference optimization
-
----
-
-**Built with Python + PyTorch 🌱**
+### One thing I'd add later
+Once we have the UI running and looking final, we should put **1–2 screenshots near the top**. That's going to make the GitHub repo feel *way* more complete than another wall of README text.
+For now, this README accurately represents what we've actually built — **no fake frontend claims, no inflated model claims, no unnecessary fluff.**
