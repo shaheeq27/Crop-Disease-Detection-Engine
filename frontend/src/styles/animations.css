@@ -1,0 +1,92 @@
+/* ══════════════════════════════════════════════════════
+   AgriNova AI — Motion System
+   Extracted from Stitch Design System
+   Communicates state · Slow, Organic, Luminous
+   ══════════════════════════════════════════════════════ */
+
+:root {
+  /* ── Animation Timings ── */
+  --duration-instant: 100ms;
+  --duration-fast: 180ms;
+  --duration-normal: 250ms;
+  --duration-slow: 400ms;
+  --duration-max: 500ms;
+  --duration-ambient: 4000ms;
+  --duration-bg: 20000ms;
+
+  /* ── Easings ── */
+  --ease-out: cubic-bezier(0.4, 0, 0.2, 1);
+  --ease-in-out: cubic-bezier(0.4, 0, 0.2, 1);
+  --ease-spring: cubic-bezier(0.16, 1, 0.3, 1); /* Buttons only */
+}
+
+/* ── Standard Page & Container Motion ── */
+@keyframes page-enter {
+  from { opacity: 0; transform: translateY(12px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes fade-in {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+@keyframes fade-in-up {
+  from { opacity: 0; transform: translateY(16px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes fade-in-down {
+  from { opacity: 0; transform: translateY(-16px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+/* ── Ambient Breathing (Always subtle & smooth) ── */
+@keyframes breathe-glow {
+  0%, 100% { box-shadow: 0 0 8px rgba(173, 255, 0, 0.10); }
+  50% { box-shadow: 0 0 20px rgba(173, 255, 0, 0.25); }
+}
+
+@keyframes breathe-border {
+  0%, 100% { border-color: rgba(173, 255, 0, 0.15); }
+  50% { border-color: rgba(173, 255, 0, 0.35); }
+}
+
+/* ── Status Pulse Dot ── */
+@keyframes status-pulse {
+  0%, 100% { opacity: 1; transform: scale(1); }
+  50% { opacity: 0.5; transform: scale(1.15); }
+}
+
+/* ── Shimmer / Skeleton ── */
+@keyframes shimmer {
+  0% { background-position: -200% 0; }
+  100% { background-position: 200% 0; }
+}
+
+/* ── Background Organic Layers ── */
+@keyframes organic-drift {
+  0% { transform: translate(0, 0) scale(1); }
+  50% { transform: translate(12px, -8px) scale(1.01); }
+  100% { transform: translate(0, 0) scale(1); }
+}
+
+@keyframes grain-shift {
+  0% { transform: translate(0, 0); }
+  50% { transform: translate(-2%, 1%); }
+  100% { transform: translate(0, 0); }
+}
+
+/* ── Motion Utility Classes ── */
+.anim-page-enter { animation: page-enter var(--duration-slow) var(--ease-out) forwards; }
+.anim-fade-in { animation: fade-in var(--duration-normal) var(--ease-out) forwards; }
+.anim-fade-in-up { opacity: 0; animation: fade-in-up var(--duration-slow) var(--ease-out) forwards; }
+.anim-breathe { animation: breathe-glow var(--duration-ambient) var(--ease-in-out) infinite; }
+.anim-status-pulse { animation: status-pulse 2.5s var(--ease-in-out) infinite; }
+
+/* ── Stagger Delays ── */
+.delay-1 { animation-delay: 60ms; }
+.delay-2 { animation-delay: 120ms; }
+.delay-3 { animation-delay: 180ms; }
+.delay-4 { animation-delay: 240ms; }
+.delay-5 { animation-delay: 300ms; }

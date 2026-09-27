@@ -1,0 +1,14 @@
+/* ══════════════════════════════════════════════════════
+   AgriNova AI — Border Radius System
+   Extracted from Stitch Design System (Organic-Geometric)
+   ══════════════════════════════════════════════════════ */
+
+:root {
+  --radius-xs: 2px;
+  --radius-sm: 4px;       /* 0.25rem - Subtle chips */
+  --radius-md: 8px;       /* 0.5rem  - Buttons & Inputs (DEFAULT) */
+  --radius-lg: 12px;      /* 0.75rem - Standard cards */
+  --radius-xl: 24px;      /* 1.5rem  - Large glass containers */
+  --radius-2xl: 32px;     /* Command center panels */
+  --radius-full: 9999px;  /* Pills, badges, rounded avatars */
+}

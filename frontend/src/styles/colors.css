@@ -1,0 +1,90 @@
+/* ══════════════════════════════════════════════════════
+   AgriNova AI — Color System (Ethereal Precision Agriculture)
+   Extracted from Stitch Design System
+   ══════════════════════════════════════════════════════ */
+
+:root {
+  /* ── Earth Canvas & Surfaces (Level 0 & 1) ── */
+  --color-bg-primary: #131412;              /* Primary Forest Noir background */
+  --color-bg-subtle: #0E0E0D;               /* Surface container lowest */
+  --color-bg-surface: #1B1C1B;              /* Surface container low */
+  --color-bg-card: #1F201F;                 /* Surface container default */
+  --color-bg-surface-high: #2A2A29;         /* Surface container high */
+  --color-bg-surface-highest: #343533;      /* Surface container highest */
+  --color-bg-surface-bright: #393938;       /* Surface bright */
+  --color-bg-surface-hover: #262725;
+  --color-bg-surface-active: #2E302D;
+  --color-bg-overlay: rgba(19, 20, 18, 0.85);
+
+  /* ── Fertile Umber / Deep Topsoil ── */
+  --color-soil-deep: #1A1412;               /* Secondary Umber ground */
+  --color-soil-container: #574238;
+  --color-soil-fixed: #FBDFCE;
+
+  /* ── Sprout & Forest Tint (Primary) ── */
+  --color-sprout: #BBCBBB;                 /* Primary sprout tint */
+  --color-sprout-container: #0F1C12;
+  --color-sprout-fixed: #D7E7D6;
+  --color-accent-dim: #536255;
+  --color-accent-faint: #263428;
+
+  /* ── Hero Accents ── */
+  /* Neon Mint — Action, Active AI, Health */
+  --color-neon-mint: #ADFF00;
+  --color-neon-mint-hover: #BDFF33;
+  --color-accent: #ADFF00;                  /* Map primary accent to Neon Mint */
+  --color-accent-secondary: #E0F2F1;        /* Crystalline Blue */
+
+  /* Crystalline Blue — Glass Overlays & Lenses */
+  --color-crystalline-blue: #E0F2F1;
+  --color-crystalline-glow: rgba(224, 242, 241, 0.15);
+
+  /* Data Stream — Live Telemetry & Feeds */
+  --color-data-stream: #22C55E;
+  --color-data-stream-glow: rgba(34, 197, 94, 0.20);
+
+  /* ── Text / On-Surface Hierarchy ── */
+  --color-text-primary: #E4E2E0;             /* On-Surface primary high-contrast */
+  --color-text-secondary: #C4C8C1;           /* On-Surface variant */
+  --color-text-muted: #8D928C;               /* Outline variant */
+  --color-text-dim: #434843;
+  --color-text-inverse: #0E0E0D;             /* Text on Neon Mint / Light buttons */
+  --color-text-on-mint: #0E0E0D;
+
+  /* ── Borders & Outlines ── */
+  --color-border: rgba(141, 146, 140, 0.15);
+  --color-border-hover: rgba(173, 255, 0, 0.35);
+  --color-border-active: rgba(173, 255, 0, 0.60);
+  --color-border-subtle: rgba(141, 146, 140, 0.08);
+  --color-border-mint: rgba(173, 255, 0, 0.20);
+  --color-border-blue: rgba(224, 242, 241, 0.15);
+
+  /* ── Glow System (Luminous Data Accents) ── */
+  --color-glow-mint-10: rgba(173, 255, 0, 0.10);
+  --color-glow-mint-15: rgba(173, 255, 0, 0.15);
+  --color-glow-mint-25: rgba(173, 255, 0, 0.25);
+  --color-glow-mint-35: rgba(173, 255, 0, 0.35);
+  --color-glow-blue-15: rgba(224, 242, 241, 0.15);
+  --color-glow-stream-20: rgba(34, 197, 94, 0.20);
+
+  /* ── Status & Severity ── */
+  --color-success: #ADFF00;
+  --color-warning: #DEC1B2;
+  --color-error: #FFB4AB;
+  --color-error-container: #93000A;
+  --color-info: #E0F2F1;
+  --color-critical: #FFB4AB;
+
+  /* Status Backgrounds */
+  --color-success-bg: rgba(173, 255, 0, 0.12);
+  --color-warning-bg: rgba(222, 193, 178, 0.12);
+  --color-error-bg: rgba(255, 180, 171, 0.12);
+  --color-info-bg: rgba(224, 242, 241, 0.12);
+
+  /* Semantic Health Statuses */
+  --color-healthy: #ADFF00;
+  --color-stress: #DEC1B2;
+  --color-disease: #FFB4AB;
+  --color-neutral: #C4C8C1;
+  --color-optimal: #E0F2F1;
+}
