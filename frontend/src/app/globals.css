@@ -1,23 +1,41 @@
 @import "tailwindcss";
 
 @theme {
-  --color-background: #0f1110;
-  --color-surface: #191c1a;
-  --color-surface-hover: #222624;
-  --color-primary: #ADFF00;
-  --color-primary-dim: rgba(173, 255, 0, 0.1);
-  --color-primary-hover: #bfff33;
-  --color-danger: #ff4d4d;
-  --color-warning: #ffb84d;
-  --color-text-main: #f0f4f2;
-  --color-text-muted: #8b9691;
-  --color-border: #2a312d;
+  --color-bg-base: #060807;
+  --color-bg-surface: #0f1311;
+  --color-bg-surface-elevated: #161c19;
+  
+  --color-accent-green: #37b76c;
+  --color-accent-green-dim: rgba(55, 183, 108, 0.15);
+  --color-accent-muted: #223f2f;
+  
+  --color-danger: #e25a5a;
+  --color-danger-dim: rgba(226, 90, 90, 0.1);
+  
+  --color-text-primary: #ededed;
+  --color-text-secondary: #909a95;
+  --color-text-tertiary: #5f6863;
+  
+  --color-border-subtle: #1e2622;
+  --color-border-strong: #2a342f;
+
+  /* Strict mathematical grid & proportions */
+  --font-mono: "Space Mono", ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+  --font-sans: "Inter", ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
 }
 
 body {
-  background-color: var(--color-background);
-  color: var(--color-text-main);
-  font-family: ui-sans-serif, system-ui, sans-serif;
+  background-color: var(--color-bg-base);
+  color: var(--color-text-primary);
+  font-family: var(--font-sans);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+/* Base reset for typography */
+h1, h2, h3, h4, h5, h6 {
+  font-weight: 500;
+  letter-spacing: -0.02em;
 }
 
 /* Custom scrollbar */
@@ -25,12 +43,12 @@ body {
   width: 8px;
 }
 ::-webkit-scrollbar-track {
-  background: var(--color-background);
+  background: var(--color-bg-base);
 }
 ::-webkit-scrollbar-thumb {
-  background: var(--color-border);
-  border-radius: 4px;
+  background: var(--color-border-strong);
+  border-radius: 0; /* mathematical strictness */
 }
 ::-webkit-scrollbar-thumb:hover {
-  background: var(--color-text-muted);
+  background: var(--color-text-tertiary);
 }

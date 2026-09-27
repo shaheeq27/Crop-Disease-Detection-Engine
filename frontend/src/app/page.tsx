@@ -1,8 +1,8 @@
 'use client';
 
 import React, { useState, useRef } from 'react';
-import { Upload, FileImage, Loader2, Leaf, Activity, Info, AlertTriangle } from 'lucide-react';
-import { DiseaseDetectionResult, DiseasePrediction } from '@/types';
+import { Upload, Activity, AlertCircle } from 'lucide-react';
+import { DiseaseDetectionResult } from '@/types';
 
 export default function Home() {
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
@@ -17,16 +17,13 @@ export default function Home() {
     const file = e.target.files?.[0];
     if (!file) return;
 
-    // Validate type
-    const validTypes = ['image/jpeg', 'image/png', 'image/webp'];
-    if (!validTypes.includes(file.type)) {
-      setError("Please select a JPEG, PNG, or WEBP image.");
+    if (!['image/jpeg', 'image/png', 'image/webp'].includes(file.type)) {
+      setError("UNSUPPORTED FORMAT: USE JPEG, PNG, OR WEBP.");
       return;
     }
 
-    // Validate size (10MB)
     if (file.size > 10 * 1024 * 1024) {
-      setError("File must be smaller than 10MB.");
+      setError("FILE SIZE EXCEEDS 10MB LIMIT.");
       return;
     }
 
@@ -55,182 +52,233 @@ export default function Home() {
     formData.append('file', selectedFile);
 
     try {
-      // Note: Assuming the FastAPI backend is running on port 8000
-      const response = await fetch('http://localhost:8000/analyze-image', {
+      const response = await fetch('http://127.0.0.1:8000/analyze-image', {
         method: 'POST',
         body: formData,
       });
 
       if (!response.ok) {
-        const errData = await response.json();
-        throw new Error(errData.detail || "Analysis failed");
+        const errData = await response.json().catch(() => ({}));
+        throw new Error(errData.detail || "ANALYSIS FAILED. SERVER ERROR.");
       }
 
       const data: DiseaseDetectionResult = await response.json();
       setResult(data);
     } catch (err: any) {
-      setError(err.message || "An unexpected error occurred during analysis.");
+      setError(err.message || "NETWORK ERROR. CONNECTION REFUSED.");
     } finally {
       setIsAnalyzing(false);
     }
   };
 
   return (
-    <main className="min-h-screen p-8 max-w-5xl mx-auto flex flex-col gap-8">
-      {/* Header */}
-      <header className="text-center py-8">
-        <div className="flex justify-center items-center gap-3 mb-4">
-          <Leaf className="w-10 h-10 text-[var(--color-primary)]" />
-          <h1 className="text-4xl font-bold tracking-tight">
-            Crop <span className="text-[var(--color-primary)]">Disease</span> Detection
-          </h1>
+    <div className="min-h-screen flex flex-col font-[var(--font-sans)] text-[var(--color-text-primary)]">
+      
+      {/* 1. HEADER (Minimal) */}
+      <header className="border-b border-[var(--color-border-subtle)] bg-[var(--color-bg-surface)]">
+        <div className="max-w-[1200px] mx-auto px-6 h-16 flex items-center justify-between">
+          <div className="flex items-center gap-3">
+            <div className="w-4 h-4 bg-[var(--color-accent-green)]"></div>
+            <span className="font-mono text-sm tracking-widest uppercase font-semibold">
+              Crop Health AI
+            </span>
+          </div>
+          <div className="flex items-center gap-2">
+            <span className="relative flex h-2 w-2">
+              <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-[var(--color-accent-green)] opacity-75"></span>
+              <span className="relative inline-flex rounded-full h-2 w-2 bg-[var(--color-accent-green)]"></span>
+            </span>
+            <span className="font-mono text-xs text-[var(--color-text-secondary)] uppercase">Engine Online</span>
+          </div>
         </div>
-        <p className="text-[var(--color-text-muted)] max-w-lg mx-auto">
-          Upload an image of a crop leaf. The AI will analyze it to detect potential diseases based on its phase 6 production model.
-        </p>
       </header>
 
-      {/* Error Message */}
-      {error && (
-        <div className="bg-[var(--color-danger)]/10 border border-[var(--color-danger)]/20 text-[var(--color-danger)] p-4 rounded-xl flex items-center gap-3">
-          <AlertTriangle className="w-5 h-5 flex-shrink-0" />
-          <p>{error}</p>
-        </div>
-      )}
-
-      {/* Main Content Area */}
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-8 items-start">
+      {/* Main Content */}
+      <main className="flex-1 w-full max-w-[1200px] mx-auto px-6 py-12 flex flex-col gap-10">
         
-        {/* Left Column: Image Upload & Preview */}
-        <div className="bg-[var(--color-surface)] border border-[var(--color-border)] rounded-2xl p-6 flex flex-col gap-6">
-          <h2 className="text-xl font-semibold flex items-center gap-2">
-            <FileImage className="w-5 h-5 text-[var(--color-primary)]" />
-            Image Selection
-          </h2>
+        {/* 2. HERO / INTRO */}
+        <section className="flex flex-col gap-2 max-w-2xl">
+          <h1 className="text-3xl font-medium tracking-tight">Crop Health Analysis</h1>
+          <p className="text-[var(--color-text-secondary)] text-base">
+            Identify disease patterns from crop leaf imagery using phase 6 inference models.
+          </p>
+        </section>
 
-          {!previewUrl ? (
-            <div 
-              className="border-2 border-dashed border-[var(--color-border)] hover:border-[var(--color-primary)]/50 rounded-xl p-12 flex flex-col items-center justify-center text-center cursor-pointer transition-colors bg-[var(--color-background)]"
-              onClick={() => fileInputRef.current?.click()}
-            >
-              <Upload className="w-12 h-12 text-[var(--color-text-muted)] mb-4" />
-              <p className="text-lg font-medium mb-1">Click to upload image</p>
-              <p className="text-sm text-[var(--color-text-muted)]">JPEG, PNG, WEBP (Max 10MB)</p>
+        {/* ERROR STATE */}
+        {error && (
+          <div className="w-full bg-[var(--color-danger-dim)] border border-[var(--color-danger)] p-4 flex items-center gap-3 text-[var(--color-danger)] font-mono text-sm uppercase">
+            <AlertCircle className="w-5 h-5" />
+            <span>{error}</span>
+          </div>
+        )}
+
+        {/* 3. UPLOAD STATE (Only shows if no image is selected) */}
+        {!previewUrl && (
+          <section 
+            onClick={() => fileInputRef.current?.click()}
+            className="w-full h-64 border border-[var(--color-border-strong)] bg-[var(--color-bg-surface)] hover:bg-[var(--color-bg-surface-elevated)] hover:border-[var(--color-accent-muted)] transition-colors cursor-pointer flex flex-col items-center justify-center gap-4 group"
+          >
+            <div className="p-4 bg-[var(--color-bg-base)] border border-[var(--color-border-subtle)] group-hover:border-[var(--color-accent-muted)] transition-colors">
+              <Upload className="w-6 h-6 text-[var(--color-text-secondary)] group-hover:text-[var(--color-accent-green)]" />
             </div>
-          ) : (
-            <div className="flex flex-col gap-4">
-              <div className="relative aspect-square rounded-xl overflow-hidden bg-black border border-[var(--color-border)]">
+            <div className="text-center flex flex-col gap-1">
+              <span className="font-medium text-lg">Initialize Analysis Workspace</span>
+              <span className="font-mono text-xs text-[var(--color-text-tertiary)] uppercase">Supported: JPEG, PNG, WEBP (Max 10MB)</span>
+            </div>
+          </section>
+        )}
+
+        {/* 4. AFTER IMAGE UPLOAD (The Result Grid) */}
+        {previewUrl && (
+          <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
+            
+            {/* LEFT COLUMN: 5/12 Image Anchor */}
+            <div className="lg:col-span-5 flex flex-col gap-6">
+              <div className="w-full aspect-[4/3] bg-[var(--color-bg-surface)] border border-[var(--color-border-strong)] relative overflow-hidden flex items-center justify-center p-2">
                 {/* eslint-disable-next-line @next/next/no-img-element */}
-                <img src={previewUrl} alt="Crop preview" className="object-cover w-full h-full" />
+                <img 
+                  src={previewUrl} 
+                  alt="Subject" 
+                  className="w-full h-full object-contain filter contrast-[0.95]" 
+                />
               </div>
-              <div className="flex gap-3">
+
+              <div className="flex gap-4">
                 <button 
                   onClick={clearSelection}
                   disabled={isAnalyzing}
-                  className="flex-1 py-3 px-4 rounded-lg bg-[var(--color-background)] border border-[var(--color-border)] hover:bg-[var(--color-surface-hover)] transition-colors disabled:opacity-50"
+                  className="flex-1 py-3 px-4 font-mono text-xs uppercase tracking-wider border border-[var(--color-border-strong)] bg-[var(--color-bg-surface)] text-[var(--color-text-secondary)] hover:bg-[var(--color-bg-surface-elevated)] hover:text-[var(--color-text-primary)] transition-colors disabled:opacity-50"
                 >
-                  Choose Another
+                  Clear Workspace
                 </button>
                 {!result && (
                   <button 
                     onClick={analyzeImage}
                     disabled={isAnalyzing}
-                    className="flex-1 py-3 px-4 rounded-lg bg-[var(--color-primary)] text-black font-semibold hover:bg-[var(--color-primary-hover)] transition-colors disabled:opacity-50 flex items-center justify-center gap-2"
+                    className="flex-1 py-3 px-4 font-mono text-xs uppercase tracking-wider border border-[var(--color-accent-green)] bg-[var(--color-accent-green-dim)] text-[var(--color-accent-green)] hover:bg-[var(--color-accent-muted)] transition-colors disabled:opacity-50 flex items-center justify-center gap-2"
                   >
                     {isAnalyzing ? (
-                      <><Loader2 className="w-5 h-5 animate-spin" /> Analyzing...</>
+                      <><Activity className="w-4 h-4 animate-spin" /> Processing...</>
                     ) : (
-                      <><Activity className="w-5 h-5" /> Analyze Image</>
+                      "Execute Analysis"
                     )}
                   </button>
                 )}
               </div>
             </div>
-          )}
-          
-          <input 
-            type="file" 
-            ref={fileInputRef}
-            className="hidden" 
-            accept="image/jpeg,image/png,image/webp"
-            onChange={handleFileSelect}
-          />
-        </div>
 
-        {/* Right Column: Analysis Results */}
-        <div className="flex flex-col gap-6">
-          {result ? (
-            <>
-              {/* Primary Prediction */}
-              <div className="bg-[var(--color-surface)] border border-[var(--color-border)] rounded-2xl p-6 relative overflow-hidden">
-                <div className="absolute top-0 right-0 w-32 h-32 bg-[var(--color-primary-dim)] blur-3xl rounded-full -translate-y-1/2 translate-x-1/2"></div>
-                
-                <h2 className="text-sm font-semibold uppercase tracking-wider text-[var(--color-text-muted)] mb-2">Primary Prediction</h2>
-                <div className="mb-6">
-                  <div className="flex justify-between items-start mb-2">
-                    <h3 className="text-3xl font-serif text-white">{result.predictions[0].disease}</h3>
-                    <div className={`px-3 py-1 text-xs font-bold uppercase rounded-full border ${result.predictions[0].is_healthy ? 'border-[var(--color-primary)] text-[var(--color-primary)] bg-[var(--color-primary-dim)]' : 'border-[var(--color-warning)] text-[var(--color-warning)] bg-[var(--color-warning)]/10'}`}>
-                      {result.predictions[0].is_healthy ? 'Healthy' : 'Disease Detected'}
-                    </div>
-                  </div>
-                  <p className="font-mono text-sm text-[var(--color-text-muted)]">CROP: {result.predictions[0].crop.toUpperCase()}</p>
+            {/* RIGHT COLUMN: 7/12 Analysis Data */}
+            <div className="lg:col-span-7 flex flex-col gap-8">
+              
+              {!result && isAnalyzing && (
+                <div className="h-full min-h-[300px] border border-[var(--color-border-strong)] bg-[var(--color-bg-surface)] flex flex-col items-center justify-center text-[var(--color-text-tertiary)] gap-4">
+                  <Activity className="w-8 h-8 animate-pulse text-[var(--color-accent-muted)]" />
+                  <span className="font-mono text-xs uppercase tracking-widest">Running Inference...</span>
                 </div>
-                
-                <div>
-                  <div className="flex justify-between text-sm mb-2">
-                    <span className="text-[var(--color-text-muted)]">Raw Softmax Probability</span>
-                    <span className="font-mono text-white">{(result.predictions[0].probability * 100).toFixed(2)}%</span>
-                  </div>
-                  <div className="h-2 w-full bg-[var(--color-background)] rounded-full overflow-hidden">
-                    <div 
-                      className="h-full bg-[var(--color-primary)] rounded-full transition-all duration-1000"
-                      style={{ width: `${result.predictions[0].probability * 100}%` }}
-                    />
-                  </div>
-                </div>
-              </div>
+              )}
 
-              {/* Alternative Predictions */}
-              <div className="bg-[var(--color-surface)] border border-[var(--color-border)] rounded-2xl p-6">
-                <h2 className="text-sm font-semibold uppercase tracking-wider text-[var(--color-text-muted)] mb-4">Ranked Alternatives</h2>
-                <div className="space-y-4">
-                  {result.predictions.slice(1, 5).map((p, idx) => (
-                    <div key={idx} className="flex justify-between items-center pb-3 border-b border-[var(--color-border)] last:border-0 last:pb-0">
-                      <div>
-                        <p className="text-white text-sm font-medium">{p.crop} - {p.disease}</p>
-                        <p className="text-xs text-[var(--color-text-muted)]">{p.is_healthy ? 'Healthy' : 'Disease'}</p>
+              {!result && !isAnalyzing && (
+                <div className="h-full min-h-[300px] border border-[var(--color-border-subtle)] border-dashed flex flex-col items-center justify-center text-[var(--color-text-tertiary)] gap-4">
+                  <span className="font-mono text-xs uppercase tracking-widest">Awaiting Execution</span>
+                </div>
+              )}
+
+              {result && (
+                <div className="flex flex-col gap-8 animate-in fade-in duration-500">
+                  
+                  {/* 5. PRIMARY RESULT */}
+                  <div className="border border-[var(--color-border-strong)] bg-[var(--color-bg-surface)] p-8 flex flex-col gap-8">
+                    
+                    <div className="flex justify-between items-start border-b border-[var(--color-border-subtle)] pb-6">
+                      <div className="flex flex-col gap-1">
+                        <span className="font-mono text-xs uppercase tracking-widest text-[var(--color-text-secondary)]">Primary Detection</span>
+                        <h2 className="text-4xl font-semibold tracking-tight text-[var(--color-text-primary)] mt-2">
+                          {result.predictions[0].disease}
+                        </h2>
+                        <span className="text-lg text-[var(--color-text-secondary)]">
+                          Host: {result.predictions[0].crop}
+                        </span>
                       </div>
-                      <div className="font-mono text-sm text-[var(--color-text-muted)]">
-                        {(p.probability * 100).toFixed(2)}%
+                      
+                      <div className={`px-3 py-1 font-mono text-xs uppercase font-bold border ${result.predictions[0].is_healthy ? 'border-[var(--color-accent-green)] text-[var(--color-accent-green)]' : 'border-[var(--color-danger)] text-[var(--color-danger)] bg-[var(--color-danger-dim)]'}`}>
+                        {result.predictions[0].is_healthy ? 'Healthy' : 'Disease Flagged'}
                       </div>
                     </div>
-                  ))}
-                </div>
-              </div>
 
-              {/* Inference Metadata */}
-              <div className="bg-[var(--color-background)] border border-[var(--color-border)] rounded-2xl p-5 flex flex-col gap-2 text-sm text-[var(--color-text-muted)]">
-                <div className="flex items-center gap-2 text-white mb-1">
-                  <Info className="w-4 h-4" />
-                  <span className="font-semibold">Engine Metadata</span>
+                    <div className="flex flex-col gap-3">
+                      <div className="flex justify-between items-end">
+                        <span className="font-mono text-xs uppercase tracking-widest text-[var(--color-text-secondary)]">Raw Softmax Probability</span>
+                        <span className="font-mono text-2xl text-[var(--color-text-primary)]">
+                          {(result.predictions[0].probability * 100).toFixed(2)}%
+                        </span>
+                      </div>
+                      
+                      {/* Mathematical Progress Bar */}
+                      <div className="h-2 w-full bg-[var(--color-bg-base)] border border-[var(--color-border-subtle)]">
+                        <div 
+                          className="h-full bg-[var(--color-accent-green)] transition-all duration-1000 ease-out"
+                          style={{ width: `${result.predictions[0].probability * 100}%` }}
+                        />
+                      </div>
+                    </div>
+
+                  </div>
+
+                  {/* 6. ALTERNATIVES (Table Layout) */}
+                  <div className="flex flex-col">
+                    <span className="font-mono text-xs uppercase tracking-widest text-[var(--color-text-secondary)] mb-4 border-b border-[var(--color-border-subtle)] pb-2">Ranked Alternatives</span>
+                    
+                    <div className="flex flex-col border border-[var(--color-border-strong)] bg-[var(--color-bg-surface)]">
+                      {/* Table Header */}
+                      <div className="grid grid-cols-12 gap-4 px-4 py-2 border-b border-[var(--color-border-subtle)] bg-[var(--color-bg-surface-elevated)] font-mono text-[10px] uppercase tracking-widest text-[var(--color-text-tertiary)]">
+                        <div className="col-span-2">Rank</div>
+                        <div className="col-span-7">Prediction</div>
+                        <div className="col-span-3 text-right">Probability</div>
+                      </div>
+                      
+                      {/* Table Rows */}
+                      {result.predictions.slice(1, 5).map((p, idx) => (
+                        <div key={idx} className="grid grid-cols-12 gap-4 px-4 py-3 border-b border-[var(--color-border-subtle)] last:border-0 text-sm items-center">
+                          <div className="col-span-2 font-mono text-[var(--color-text-tertiary)]">
+                            {String(idx + 2).padStart(2, '0')}
+                          </div>
+                          <div className="col-span-7 flex flex-col">
+                            <span className="text-[var(--color-text-primary)]">{p.crop} - {p.disease}</span>
+                          </div>
+                          <div className="col-span-3 text-right font-mono text-[var(--color-text-secondary)]">
+                            {(p.probability * 100).toFixed(2)}%
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+
+                  {/* 7. MODEL INFORMATION (Metadata) */}
+                  <div className="grid grid-cols-2 md:grid-cols-4 gap-px bg-[var(--color-border-strong)] border border-[var(--color-border-strong)]">
+                    <div className="bg-[var(--color-bg-surface)] p-4 flex flex-col gap-1">
+                      <span className="font-mono text-[10px] uppercase text-[var(--color-text-tertiary)]">Architecture</span>
+                      <span className="font-mono text-xs text-[var(--color-text-primary)]">{result.metadata.architecture}</span>
+                    </div>
+                    <div className="bg-[var(--color-bg-surface)] p-4 flex flex-col gap-1">
+                      <span className="font-mono text-[10px] uppercase text-[var(--color-text-tertiary)]">Version</span>
+                      <span className="font-mono text-xs text-[var(--color-text-primary)]">{result.metadata.model_version}</span>
+                    </div>
+                    <div className="bg-[var(--color-bg-surface)] p-4 flex flex-col gap-1">
+                      <span className="font-mono text-[10px] uppercase text-[var(--color-text-tertiary)]">Classes</span>
+                      <span className="font-mono text-xs text-[var(--color-text-primary)]">{result.metadata.num_classes}</span>
+                    </div>
+                    <div className="bg-[var(--color-bg-surface)] p-4 flex flex-col gap-1">
+                      <span className="font-mono text-[10px] uppercase text-[var(--color-text-tertiary)]">Inference Time</span>
+                      <span className="font-mono text-xs text-[var(--color-text-primary)]">{result.inference_time_ms.toFixed(1)} ms</span>
+                    </div>
+                  </div>
+
                 </div>
-                <div className="grid grid-cols-2 gap-y-2 gap-x-4 font-mono text-xs">
-                  <div>Inference Time: <span className="text-white">{result.inference_time_ms.toFixed(1)}ms</span></div>
-                  <div>Model: <span className="text-white">{result.metadata.architecture}</span></div>
-                  <div>Version: <span className="text-white">{result.metadata.model_version}</span></div>
-                  <div>Classes: <span className="text-white">{result.metadata.num_classes}</span></div>
-                </div>
-              </div>
-            </>
-          ) : (
-            <div className="h-full min-h-[400px] border border-[var(--color-border)] border-dashed rounded-2xl flex flex-col items-center justify-center text-center p-8 text-[var(--color-text-muted)] bg-[var(--color-surface)]/30">
-              <Activity className="w-16 h-16 mb-4 opacity-20" />
-              <p className="text-lg font-medium text-white/50">Awaiting Image</p>
-              <p className="text-sm mt-2 max-w-[250px]">Upload an image and run analysis to see the predictions here.</p>
+              )}
             </div>
-          )}
-        </div>
-      </div>
-    </main>
+          </div>
+        )}
+      </main>
+    </div>
   );
 }
